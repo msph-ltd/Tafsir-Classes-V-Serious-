@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tafsir Study Circle — Session Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8CC7A;
+    --gold-dim: #8a7240;
+    --ink: #1C1A0F;
+    --muted: #6B5E3A;
+    --surface: #F0E8D0;
+    --bg: #FAF6EC;
+    --card: #FFFFFF;
+    --border: #DDD0A8;
+    --border-em: #C9B87A;
+    --r: 12px;
+  }
+
+  html { font-size: 16px; }
+  body {
+    font-family: 'Lato', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  .site-header {
+    background: #1C1A0F;
+    padding: 2.5rem 1rem 2rem;
+    text-align: center;
+    border-bottom: 3px solid var(--gold);
+  }
+  .arabic-top {
+    font-family: 'Amiri', serif;
+    font-size: 28px;
+    color: var(--gold-light);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.04em;
+  }
+  .site-header h1 {
+    font-family: 'Amiri', serif;
+    font-size: 2.2rem;
+    font-weight: 400;
+    color: #fff;
+    margin-bottom: 0.3rem;
+  }
+  .site-header .tagline {
+    font-family: 'Amiri', serif;
+    font-size: 1.25rem;
+    color: var(--gold);
+    font-style: italic;
+    margin-bottom: 0.6rem;
+  }
+  .site-header .meta {
+    font-size: 0.78rem;
+    color: #7A6B4A;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .nav-wrap {
+    background: #1C1A0F;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid #3a3318;
+  }
+  .nav-inner {
+    display: flex;
+    max-width: 780px;
+    margin: 0 auto;
+  }
+  .nav-btn {
+    flex: 1;
+    padding: 0.75rem 0.5rem;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #7A6B4A;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .nav-btn:hover { color: var(--gold-light); }
+  .nav-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  .main { max-width: 780px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 1rem;
+  }
+
+  .principle-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    overflow: hidden;
+  }
+  .principle-card:hover { border-color: var(--gold); }
+  .principle-card.open { border-color: var(--gold); box-shadow: 0 2px 12px rgba(201,168,76,0.12); }
+
+  .pc-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 1rem 1.25rem;
+  }
+  .pc-num {
+    min-width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gold);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .pc-title {
+    font-family: 'Amiri', serif;
+    font-size: 1.1rem;
+    color: var(--ink);
+    flex: 1;
+    line-height: 1.4;
+  }
+  .pc-title em { font-style: italic; color: var(--gold-dim); }
+  .pc-chevron {
+    font-size: 1.1rem;
+    color: #bbb;
+    margin-top: 2px;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .principle-card.open .pc-chevron { transform: rotate(90deg); color: var(--gold); }
+
+  .pc-body {
+    display: none;
+    padding: 1rem 1.25rem 1.1rem;
+    border-top: 1px solid var(--border);
+  }
+  .principle-card.open .pc-body { display: block; }
+
+  .pc-body p {
+    font-size: 0.92rem;
+    color: #555;
+    line-height: 1.75;
+    margin-bottom: 0.75rem;
+  }
+  .pc-reflection {
+    background: #FBF5E6;
+    border-left: 3px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+    padding: 0.7rem 0.9rem;
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+  .pc-reflection strong {
+    display: block;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gold-dim);
+    margin-bottom: 0.3rem;
+  }
+
+  .step-list { list-style: none; }
+  .step-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1rem 1.1rem;
+    margin-bottom: 0.65rem;
+  }
+  .step-num {
+    min-width: 32px;
+    height: 32px;
+    background: var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .step-body { flex: 1; }
+  .step-title { font-weight: 700; font-size: 0.95rem; color: var(--ink); margin-bottom: 0.3rem; }
+  .step-desc { font-size: 0.88rem; color: #666; line-height: 1.65; }
+
+  .duo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  @media (max-width: 560px) { .duo-grid { grid-template-columns: 1fr; } }
+  .duo-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1rem 1.1rem;
+  }
+  .duo-card h3 {
+    font-family: 'Amiri', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--gold-dim);
+    margin-bottom: 0.65rem;
+  }
+  .duo-card ul { padding-left: 1.1rem; }
+  .duo-card li { font-size: 0.88rem; color: #666; line-height: 1.65; margin-bottom: 0.3rem; }
+
+  .q-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.7rem;
+    margin-bottom: 1.5rem;
+  }
+  @media (max-width: 560px) { .q-grid { grid-template-columns: 1fr; } }
+  .q-card {
+    background: #1C1A0F;
+    border: 1px solid #3a3318;
+    border-left: 3px solid var(--gold);
+    border-radius: var(--r);
+    padding: 1rem 1.1rem;
+  }
+  .q-num { font-size: 0.72rem; font-weight: 700; color: var(--gold); margin-bottom: 0.4rem; letter-spacing: 0.05em; text-transform: uppercase; }
+  .q-text {
+    font-family: 'Amiri', serif;
+    font-size: 1.05rem;
+    color: #E8DABB;
+    font-style: italic;
+    line-height: 1.55;
+  }
+
+  .reminder-box {
+    background: #1C1A0F;
+    border: 1px solid #3a3318;
+    border-top: 3px solid var(--gold);
+    border-radius: var(--r);
+    padding: 1.2rem 1.4rem;
+  }
+  .reminder-box p {
+    font-family: 'Amiri', serif;
+    font-size: 1.1rem;
+    color: #E8DABB;
+    line-height: 1.75;
+    font-style: italic;
+  }
+  .reminder-box cite {
+    display: block;
+    font-size: 0.8rem;
+    color: #7A6B4A;
+    margin-top: 0.6rem;
+    font-style: normal;
+    letter-spacing: 0.05em;
+  }
+
+  .cl-columns {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  @media (max-width: 560px) { .cl-columns { grid-template-columns: 1fr; } }
+
+  .cl-group { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+  .cl-group-header {
+    background: var(--gold);
+    padding: 0.55rem 1rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #fff;
+  }
+  .cl-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid #f0e8d0;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .cl-item:last-child { border-bottom: none; }
+  .cl-item:hover { background: #fffdf5; }
+  .cl-box {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--gold);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+  }
+  .cl-box.checked { background: var(--gold); border-color: var(--gold); }
+  .cl-check { color: #fff; font-size: 12px; display: none; font-weight: 700; }
+  .cl-box.checked .cl-check { display: block; }
+  .cl-text { font-size: 0.88rem; color: var(--ink); line-height: 1.5; }
+  .cl-text.done { text-decoration: line-through; color: #bbb; }
+
+  .cl-reset {
+    display: block;
+    margin: 1.25rem auto 0;
+    padding: 0.5rem 1.5rem;
+    font-size: 0.8rem;
+    font-family: 'Lato', sans-serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: transparent;
+    border: 1px solid var(--border-em);
+    border-radius: 6px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .cl-reset:hover { background: var(--gold); color: #fff; border-color: var(--gold); }
+
+  .site-footer {
+    background: #1C1A0F;
+    border-top: 3px solid var(--gold);
+    text-align: center;
+    padding: 1.5rem 1rem;
+  }
+  .site-footer p {
+    font-family: 'Amiri', serif;
+    font-size: 1.1rem;
+    color: var(--gold-light);
+    font-style: italic;
+    margin-bottom: 0.4rem;
+  }
+  .site-footer small { font-size: 0.75rem; color: #5a4f30; letter-spacing: 0.08em; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="arabic-top">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+  <h1>Tafsir Study Circle</h1>
+  <div class="tagline">Session Guide</div>
+  <div class="meta">Founded on the advice of a scholar &nbsp;·&nbsp; 18 months of seeking &nbsp;·&nbsp; 11 seekers</div>
+</header>
+
+<nav class="nav-wrap">
+  <div class="nav-inner">
+    <button class="nav-btn active" onclick="showPanel('principles', this)">Principles</button>
+    <button class="nav-btn" onclick="showPanel('method', this)">Method</button>
+    <button class="nav-btn" onclick="showPanel('tadabbur', this)">Tadabbur</button>
+    <button class="nav-btn" onclick="showPanel('checklist', this)">Checklist</button>
+  </div>
+</nav>
+
+<main class="main">
+
+  <div id="panel-principles" class="panel active">
+    <div class="section-label">The 12 Principles — tap each to reflect</div>
+
+    <div class="principle-card" onclick="toggle(this)">
+      <div class="pc-header"><div class="pc-num">1</div><div class="pc-title"><em>Sincerity</em> — approach for the sake of Allah (SWT)</div><div class="pc-chevron">›</div></div>
+      <div class="pc-body"><p>Begin every session with a sincere intention. The goal is not academic knowledge alone, but drawing closer to Allah (SWT). Let this shape the atmosphere from the first moment.</p><div class="pc-reflection"><strong>Pause &amp; ask tonight</strong>Check in silently: what brought you to this circle? Renew that intention before you open the Quran.</div></div>
+    </div>
+
+    <div class="principle-card" onclick="toggle(this)">
+      <div class="pc-header"><div class="pc-num">2</div><div class="pc-title"><em>Reality of the Quran</em> — approach it as a cure</div><div class="pc-chevron">›</div></div>
+      <div class="pc-body"><p>The scholar asked us to think of ourselves as a sick patient who craves the Quran as medicine. This is not metaphor — it is an orientation of the heart.</p><div class="pc-reflection"><strong>Pause &amp; ask tonight</strong>What ails you right now — in your life, your character, your relationship with Allah? Come to these verses with that need.</div></div>
+    </div>
+
+    <div class="principle-card" onclick="toggle(this)">
+      <div class="pc-header"><div class="pc-num">3</div><div class="pc-title"><em>Physical copies</em> — honour the sanctity of His word</div><div class="pc-chevron">›</div></div>
+      <div class="pc-body"><p>Reading from a physical Mushaf focuses the mind and manifests the sanctity of Allah's word more powerfully than a screen. It is a simple act with a deep spiritual dimension.</p><div class="pc-reflection"><strong>Reminder</strong>Ensure everyone in the group has a physical copy tonight. If not, pair up.</div></div>
+    </div>
+
+    <div class="principle-card" onclick="toggle(this)">
+      <div class="pc-header"><div class="pc-num">4</div><div class="pc-title"><em>Recitation</em> — fill the session with barakah</div><div class="pc-chevron">›</div></div>
+      <div class="pc-body"><p>Begin by reciting the verses aloud. This is not a formality — the very words of Allah (SWT) carry barakah and set the tone for everything that follows.</p><div class="pc-reflection"><strong>Tonight</strong>Recite slowly. Let the group follow in their copies. Hold a moment of silence after the recitation before anyone speaks.</div></div>
+    </div>
+
+    <div class="principle-card" onclick="toggle(this)">
+      <div class="pc-header"><div class="pc-num">5</div><div class="pc-title"><em>Translation</em> — an honest starting point</div><div class="pc-chevron">›</div></div>
+      <div class="pc-body"><p>Read the translation during or after recitation to grasp the apparent meaning. Acknowledge openly that translations lose depth — but they are the doorway, not the destination.</p><div class="pc-reflection"><strong>Remind the group</strong>Translation gives us a map, not the territory. Keep that humility as we go deeper.</div></div>
+    </div>
+
+    <div class="principle-card" onclick="toggle(this)">
+      <div class="pc-header"><div class="pc-num">6</div><div class="pc-title"><em>Word by word</em> — the depth is in the details</div><div class="pc-chevron">›</div></div>
+      <div class="pc-body"><p>Examine each word carefully. Arabic is a language where a single root carries layers of meaning. One word can open an entire theological universe.</p><div class="pc-reflection"><strong>Tonight</strong>Pause on every key term. Write them on a board or paper. What concepts orbit each word?</div></div>
+    </div>
+
+    <div class="principle-card" onclick="toggle(this)">
+      <div class="pc-header"><div class="pc-num">7</div><div class="pc-title"><em>Tadabbur</em> — contemplate and question</div><div class="pc-chevron">›</div></div>
+      <div class="pc-body"><p>Sit with the verse. What does it say to you? Write down questions that arise naturally as you read. The act of writing crystallises thought and opens new understanding.</p><div class="pc-reflection"><strong>Tonight</strong>Give the group 5 minutes of silent writing before discussion. See the Tadabbur tab for guiding questions.</div></div>
+    </div>
+
+    <div class="principle-card" onclick="toggle(this)">
+      <div class="pc-header"><div class="pc-num">8</div><div class="pc-title"><em>No forced conclusions</em> — hold ideas, verify later</div><div class="pc-chevron">›</div></div>
+      <div class="pc-body"><p>Discussion is not about arriving at answers. It is about honest inquiry. Pose questions, explore possibilities, but hold conclusions loosely — then verify with scholars and tafsirs.</p><div class="pc-reflection"><strong>Group norm</strong>End each discussion point with "let's note this to verify" rather than "so the meaning is..."</div></div>
+    </div>
+
+    <div class="principle-card" onclick="toggle(this)">
+      <div class="pc-header"><div class="pc-num">9</div><div class="pc-title"><em>Choosing tafsir</em> — match the level to the group</div><div class="pc-chevron">›</div></div>
+      <div class="pc-body"><p>Some tafsirs are too surface-level to add depth. Others assume technical prerequisites you may not yet have — and can lead to misunderstanding. Choose one that stretches the group without overwhelming it.</p><div class="pc-reflection"><strong>Consider</strong>Are the tafsirs being presented tonight at the right level? Could you add a second source for comparison?</div></div>
+    </div>
+
+    <div class="principle-card" onclick="toggle(this)">
+      <div class="pc-header"><div class="pc-num">10</div><div class="pc-title"><em>Gradual process</em> — one step at a time</div><div class="pc-chevron">›</div></div>
+      <div class="pc-body"><p>Everyone can understand the Quran to some degree. Aim first for the apparent meanings. More will open with time, patience, and continued study. Do not rush the journey.</p><div class="pc-reflection"><strong>Encouragement</strong>18 months and now 11 people — that is itself a sign of sincere effort. Trust the process.</div></div>
+    </div>
+
+    <div class="principle-card" onclick="toggle(this)">
+      <div class="pc-header"><div class="pc-num">11</div><div class="pc-title"><em>Eternal message</em> — revelation speaks to now</div><div class="pc-chevron">›</div></div>
+      <div class="pc-body"><p>Even verses revealed in specific historical moments carry universal and timeless guidance. Every person in this room tonight can find something that speaks directly to their life.</p><div class="pc-reflection"><strong>Tonight</strong>Before closing, invite each person to share one thing from the verses they are taking home with them.</div></div>
+    </div>
+
+    <div class="principle-card" onclick="toggle(this)">
+      <div class="pc-header"><div class="pc-num">12</div><div class="pc-title"><em>Ahlul Bayt (a)</em> — the living Quran</div><div class="pc-chevron">›</div></div>
+      <div class="pc-body"><p>The Ahlul Bayt (a) are the true embodiments of the Quran. A genuine understanding requires their words and explanations. Hadith from the Imams (a) are not supplementary — they are foundational.</p><div class="pc-reflection"><strong>Always ask</strong>What have the Ahlul Bayt (a) said about this verse? This should be a core part of every session.</div></div>
+    </div>
+  </div>
+
+  <div id="panel-method" class="panel">
+    <div class="section-label">How to lead a topic — the framework</div>
+    <ul class="step-list">
+      <li class="step-item"><div class="step-num">1</div><div class="step-body"><div class="step-title">Select your ayah(s) or concept</div><div class="step-desc">Be specific. A single ayah explored deeply is worth more than five covered superficially. If covering a concept, anchor it to specific ayat.</div></div></li>
+      <li class="step-item"><div class="step-num">2</div><div class="step-body"><div class="step-title">Linguistic analysis</div><div class="step-desc">Look for repetition, specific word choices, and the order of subjects. Ask: why this word and not another? Is there a pattern or emphasis? Consult Arabic lexicons if possible.</div></div></li>
+      <li class="step-item"><div class="step-num">3</div><div class="step-body"><div class="step-title">In-depth meaning</div><div class="step-desc">What is the verse actually saying at a deeper level? Move beyond the translation. What theological, ethical, or spiritual realities does it point to?</div></div></li>
+      <li class="step-item"><div class="step-num">4</div><div class="step-body"><div class="step-title">Asbab al-Nuzul — context of revelation</div><div class="step-desc">What was the situation when this ayah was revealed? Understanding the historical and prophetic context illuminates meaning — but remember, the message is eternal and universal.</div></div></li>
+      <li class="step-item"><div class="step-num">5</div><div class="step-body"><div class="step-title">Tafsir — read multiple sources</div><div class="step-desc">Do not rely on a single tafsir. Bring at least two. Where they agree, that is well-established ground. Where they differ, that is where the richest discussion begins.</div></div></li>
+      <li class="step-item"><div class="step-num">6</div><div class="step-body"><div class="step-title">Hadith of the Ahlul Bayt (a)</div><div class="step-desc">Include narrations from the Imams (a) as a foundational element. What have they said about this verse or concept? This is not optional in a Shia tafsir circle.</div></div></li>
+      <li class="step-item"><div class="step-num">7</div><div class="step-body"><div class="step-title">How does this affect me today?</div><div class="step-desc">Bring it home. How does this verse speak to your daily life, your character, your relationships, your community? Invite the group to reflect, not just listen.</div></div></li>
+    </ul>
+    <div class="duo-grid">
+      <div class="duo-card"><h3>Adding depth — practical tips</h3><ul><li>Present the Arabic root of key words</li><li>Compare two tafsirs side by side</li><li>Read a related hadith before the tafsir section</li><li>Use silence — give the group time to sit with the verse</li><li>End with an open question, not a conclusion</li></ul></div>
+      <div class="duo-card"><h3>What causes sessions to lose depth</h3><ul><li>Reading only one tafsir superficially</li><li>Rushing through verses to cover more</li><li>Skipping the linguistic dimension entirely</li><li>Not including hadith from the Ahlul Bayt (a)</li><li>Presenting without connecting to daily life</li></ul></div>
+    </div>
+  </div>
+
+  <div id="panel-tadabbur" class="panel">
+    <div class="section-label">Eight questions for deep contemplation</div>
+    <div class="q-grid">
+      <div class="q-card"><div class="q-num">Question 1</div><div class="q-text">What does Allah (SWT) want me to feel?</div></div>
+      <div class="q-card"><div class="q-num">Question 2</div><div class="q-text">Why this word and not another?</div></div>
+      <div class="q-card"><div class="q-num">Question 3</div><div class="q-text">Who is being addressed — and does it include me?</div></div>
+      <div class="q-card"><div class="q-num">Question 4</div><div class="q-text">What action does this verse call me to?</div></div>
+      <div class="q-card"><div class="q-num">Question 5</div><div class="q-text">What question does this raise? Write it down.</div></div>
+      <div class="q-card"><div class="q-num">Question 6</div><div class="q-text">How does this verse relate to those around it?</div></div>
+      <div class="q-card"><div class="q-num">Question 7</div><div class="q-text">What would the Imam (a) say to me through this verse?</div></div>
+      <div class="q-card"><div class="q-num">Question 8</div><div class="q-text">Where do I see this verse in the world today?</div></div>
+    </div>
+    <div class="reminder-box">
+      <p>"Contemplate on what the verse is telling you. Pose and write down questions that come up... discuss possible answers without forcing conclusions. These can be kept in mind and verified with scholars."</p>
+      <cite>— Advice of the scholar</cite>
+    </div>
+  </div>
+
+  <div id="panel-checklist" class="panel">
+    <div class="section-label">Tonight's session — tap to check off</div>
+    <div class="cl-columns" id="checklist-root"></div>
+    <button class="cl-reset" onclick="resetChecklist()">Reset checklist</button>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <p>اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَآلِ مُحَمَّد</p>
+  <small>Tafsir Study Circle &nbsp;·&nbsp; Session Guide</small>
+</footer>
+
+<script>
+  const checkData = [
+    { group: "Opening", items: ["Renewed intention — sincerity before beginning","Physical copies of the Quran distributed","Verses recited aloud — group followed along","Translation read and initial meanings noted"] },
+    { group: "Study", items: ["Key words examined linguistically","Context of revelation (Asbab al-Nuzul) covered","Tafsir from at least two sources presented","Hadith from the Ahlul Bayt (a) included"] },
+    { group: "Reflection", items: ["Silent tadabbur time given to the group","Open discussion — no forced conclusions","Connected to daily life: how does this affect me?","Questions noted for verification with scholars"] },
+    { group: "Closing", items: ["Each person shared one personal reflection","Open questions recorded for next session","Closed with du'a and salawat"] },
+  ];
+
+  const state = {};
+
+  function buildChecklist() {
+    const root = document.getElementById('checklist-root');
+    root.innerHTML = '';
+    checkData.forEach(({ group, items }) => {
+      const grp = document.createElement('div');
+      grp.className = 'cl-group';
+      const hdr = document.createElement('div');
+      hdr.className = 'cl-group-header';
+      hdr.textContent = group;
+      grp.appendChild(hdr);
+      items.forEach((item, j) => {
+        const key = group + j;
+        const row = document.createElement('div');
+        row.className = 'cl-item';
+        row.onclick = () => { state[key] = !state[key]; buildChecklist(); };
+        const box = document.createElement('div');
+        box.className = 'cl-box' + (state[key] ? ' checked' : '');
+        const tick = document.createElement('span');
+        tick.className = 'cl-check';
+        tick.textContent = '✓';
+        box.appendChild(tick);
+        const txt = document.createElement('div');
+        txt.className = 'cl-text' + (state[key] ? ' done' : '');
+        txt.textContent = item;
+        row.appendChild(box);
+        row.appendChild(txt);
+        grp.appendChild(row);
+      });
+      root.appendChild(grp);
+    });
+  }
+
+  function resetChecklist() {
+    Object.keys(state).forEach(k => delete state[k]);
+    buildChecklist();
+  }
+
+  buildChecklist();
+
+  function showPanel(name, btn) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+    btn.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function toggle(card) { card.classList.toggle('open'); }
+</script>
+</body>
+</html>
