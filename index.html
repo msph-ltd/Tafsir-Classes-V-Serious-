@@ -363,6 +363,73 @@
     margin-bottom: 0.4rem;
   }
   .site-footer small { font-size: 0.75rem; color: #5a4f30; letter-spacing: 0.08em; }
+
+ .surah-summary {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 0.9rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.surah-tracker-root {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.surah-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+}
+
+.surah-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.surah-number {
+  min-width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.surah-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.surah-status {
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-em);
+  background: #fff;
+  color: var(--ink);
+  font-family: 'Lato', sans-serif;
+}
+
+@media (max-width: 560px) {
+  .surah-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
 </style>
 </head>
 <body>
@@ -380,6 +447,7 @@
     <button class="nav-btn" onclick="showPanel('method', this)">Method</button>
     <button class="nav-btn" onclick="showPanel('tadabbur', this)">Tadabbur</button>
     <button class="nav-btn" onclick="showPanel('checklist', this)">Checklist</button>
+   <button class="nav-btn" onclick="showPanel('surahs', this)">Surahs</button>
   </div>
 </nav>
 
@@ -447,7 +515,12 @@
       <div class="pc-header"><div class="pc-num">12</div><div class="pc-title"><em>Ahlul Bayt (a)</em> — the living Quran</div><div class="pc-chevron">›</div></div>
       <div class="pc-body"><p>The Ahlul Bayt (a) are the true embodiments of the Quran. A genuine understanding requires their words and explanations. Hadith from the Imams (a) are not supplementary — they are foundational.</p><div class="pc-reflection"><strong>Always ask</strong>What have the Ahlul Bayt (a) said about this verse? This should be a core part of every session.</div></div>
     </div>
-  </div>
+ 
+ <div id="panel-surahs" class="panel">
+  <div class="section-label">Track what has been started or completed</div>
+  <div class="surah-summary" id="surah-summary"></div>
+  <div class="surah-tracker-root" id="surah-tracker-root"></div>
+</div>
 
   <div id="panel-method" class="panel">
     <div class="section-label">How to lead a topic — the framework</div>
@@ -498,6 +571,14 @@
 </footer>
 
 <script>
+  <script type="module">
+  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+  const SUPABASE_URL = "PASTE_YOUR_PROJECT_URL";
+  const SUPABASE_ANON_KEY = "PASTE_YOUR_ANON_KEY";
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
   const checkData = [
     { group: "Opening", items: ["Renewed intention — sincerity before beginning","Physical copies of the Quran distributed","Verses recited aloud — group followed along","Translation read and initial meanings noted"] },
     { group: "Study", items: ["Key words examined linguistically","Context of revelation (Asbab al-Nuzul) covered","Tafsir from at least two sources presented","Hadith from the Ahlul Bayt (a) included"] },
@@ -513,48 +594,152 @@
     checkData.forEach(({ group, items }) => {
       const grp = document.createElement('div');
       grp.className = 'cl-group';
+
       const hdr = document.createElement('div');
       hdr.className = 'cl-group-header';
       hdr.textContent = group;
       grp.appendChild(hdr);
+
       items.forEach((item, j) => {
         const key = group + j;
         const row = document.createElement('div');
         row.className = 'cl-item';
-        row.onclick = () => { state[key] = !state[key]; buildChecklist(); };
+        row.onclick = () => {
+          state[key] = !state[key];
+          buildChecklist();
+        };
+
         const box = document.createElement('div');
         box.className = 'cl-box' + (state[key] ? ' checked' : '');
+
         const tick = document.createElement('span');
         tick.className = 'cl-check';
         tick.textContent = '✓';
         box.appendChild(tick);
+
         const txt = document.createElement('div');
         txt.className = 'cl-text' + (state[key] ? ' done' : '');
         txt.textContent = item;
+
         row.appendChild(box);
         row.appendChild(txt);
         grp.appendChild(row);
       });
+
       root.appendChild(grp);
     });
   }
 
-  function resetChecklist() {
+  window.resetChecklist = function resetChecklist() {
     Object.keys(state).forEach(k => delete state[k]);
     buildChecklist();
-  }
+  };
 
-  buildChecklist();
-
-  function showPanel(name, btn) {
+  window.showPanel = function showPanel(name, btn) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('panel-' + name).classList.add('active');
     btn.classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  window.toggle = function toggle(card) {
+    card.classList.toggle('open');
+  };
+
+  function renderSummary(rows) {
+    const started = rows.filter(r => r.status === 'in_progress').length;
+    const completed = rows.filter(r => r.status === 'completed').length;
+    const notStarted = rows.filter(r => r.status === 'not_started').length;
+
+    document.getElementById('surah-summary').innerHTML = `
+      <strong>${completed}</strong> completed &nbsp;·&nbsp;
+      <strong>${started}</strong> in progress &nbsp;·&nbsp;
+      <strong>${notStarted}</strong> not started
+    `;
   }
 
-  function toggle(card) { card.classList.toggle('open'); }
+  function renderSurahs(rows) {
+    const root = document.getElementById('surah-tracker-root');
+    root.innerHTML = '';
+
+    rows.forEach((surah) => {
+      const row = document.createElement('div');
+      row.className = 'surah-row';
+
+      row.innerHTML = `
+        <div class="surah-meta">
+          <div class="surah-number">${surah.surah_number}</div>
+          <div class="surah-name">${surah.surah_name}</div>
+        </div>
+        <select class="surah-status" data-id="${surah.surah_number}">
+          <option value="not_started" ${surah.status === 'not_started' ? 'selected' : ''}>Not Started</option>
+          <option value="in_progress" ${surah.status === 'in_progress' ? 'selected' : ''}>In Progress</option>
+          <option value="completed" ${surah.status === 'completed' ? 'selected' : ''}>Completed</option>
+        </select>
+      `;
+
+      root.appendChild(row);
+    });
+
+    document.querySelectorAll('.surah-status').forEach((select) => {
+      select.addEventListener('change', async (e) => {
+        const surahNumber = Number(e.target.dataset.id);
+        const status = e.target.value;
+
+        const { error } = await supabase
+          .from('surah_tracker')
+          .update({
+            status,
+            updated_at: new Date().toISOString()
+          })
+          .eq('surah_number', surahNumber);
+
+        if (error) {
+          console.error(error);
+          alert('Update failed. Check Supabase policies/config.');
+        }
+      });
+    });
+
+    renderSummary(rows);
+  }
+
+  async function loadSurahs() {
+    const { data, error } = await supabase
+      .from('surah_tracker')
+      .select('*')
+      .order('surah_number', { ascending: true });
+
+    if (error) {
+      console.error(error);
+      document.getElementById('surah-tracker-root').innerHTML =
+        '<div class="surah-summary">Could not load surah tracker.</div>';
+      return;
+    }
+
+    renderSurahs(data);
+  }
+
+  await loadSurahs();
+
+  supabase
+    .channel('surah-tracker-live')
+    .on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'public',
+        table: 'surah_tracker'
+      },
+      async () => {
+        await loadSurahs();
+      }
+    )
+    .subscribe();
+
+  buildChecklist();
+</script>
 </script>
 </body>
 </html>
